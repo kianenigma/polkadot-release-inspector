@@ -1,8 +1,10 @@
+import { Console } from 'console';
 import React, { useEffect, useState } from 'react';
 
 interface Release {
 	id: number;
 	name: string;
+	created_at: string;
 
 	tag_name: string;
 	prev_tag_name: string;
@@ -11,17 +13,26 @@ interface Release {
 	prev_substrate_commit: string;
 
 	pull_requests: PullRequest[];
+
 }
 
 interface PullRequest {
 	id: number;
 	title: string;
 	author: string;
-	repo: "substrate" | "polkadot"
+	repo: "substrate" | "polkadot" | "cumulus"
 }
 
 const headers = {
 	Authorization: `Bearer ${process.env.REACT_APP_GH_API}`,
+}
+
+function releaseLink(tag: string): string {
+	return `https://github.com/paritytech/polkadot/releases/tag/${tag}`
+}
+
+function tagLink(tag: string): string {
+	return `https://github.com/paritytech/polkadot/tree/${tag}`
 }
 
 function ReleaseList(): JSX.Element {
@@ -44,47 +55,78 @@ function ReleaseList(): JSX.Element {
 		});
 	};
 
-	const getSubstrateVersion = async (commitHash: string): Promise<string | undefined> => {
+	const getVersionFromCargo = async (repo: string, commitHash: string): Promise<string | undefined> => {
 		const content = await fetch(`https://api.github.com/repos/paritytech/polkadot/contents/Cargo.lock?ref=${commitHash}`, { headers })
 			.then((d) => d.json())
 			.then((data) => atob(data.content));
-		return content.split("\n").find((l) => l.includes("https://github.com/paritytech/substrate?branch"))?.split("#")[1].slice(0, -1);
-	};
+		return content.split("\n").find((l) => l.includes(`https://github.com/paritytech/${repo}?branch`))?.split("#")[1].slice(0, -1);
+	}
 
 	useEffect(() => {
-		const process = async () => {
+		const getReleases = async (): Promise<Release[]> => {
 			const rawReleases: Release[] = await fetch('https://api.github.com/repos/paritytech/polkadot/releases', { headers })
 				.then(response => response.json());
-			let prevTagName = "";
-			let prevSubstrateCommit = "";
-			rawReleases.reverse()
 
-			for (let release of rawReleases) {
-				let substrate_commit = await getSubstrateVersion(release.tag_name);
-				if (prevTagName.length) {
-					let polkadot_prs = await getPrsBetween("polkadot", prevTagName, release.tag_name);
-					let substrate_prs: PullRequest[] = prevSubstrateCommit.length ? await getPrsBetween("substrate", prevSubstrateCommit, substrate_commit!) : [];
-
-					release.pull_requests = polkadot_prs.concat(substrate_prs);
-					release.prev_tag_name = prevTagName;
-					release.prev_substrate_commit = prevSubstrateCommit;
-					release.substrate_commit = substrate_commit || "UNKNOWN";
+			for (let i = 0; i < rawReleases.length; i++) {
+				console.log(rawReleases[i]);
+				if (i !== (rawReleases.length - 1)) {
+					rawReleases[i].prev_tag_name = rawReleases[i + 1].tag_name;
 				}
 
-				prevSubstrateCommit = substrate_commit!;
-				prevTagName = release.tag_name;
+				rawReleases[i].substrate_commit = "loading..";
+				rawReleases[i].prev_substrate_commit = "loading..";
+
+				rawReleases[i].pull_requests = []
 			}
 
-
 			setReleases(rawReleases);
-			setFilteredReleases(rawReleases);
+			return rawReleases;
+		}
+
+		const getSubstrateCommits = async (givenReleases: Release[]) => {
+			const newReleases = await Promise.all(givenReleases.map(async (r: Release) => {
+				let substrate_commit = await getVersionFromCargo("substrate", r.tag_name);
+				r.substrate_commit = substrate_commit!;
+				return r
+			}));
+
+			for (let i = 0; i < newReleases.length; i++) {
+				if (i !== newReleases.length - 1) {
+					newReleases[i].prev_substrate_commit = newReleases[i + 1].substrate_commit
+				}
+			}
+
+			// arrays are passed by ref.
+			givenReleases = newReleases;
+			setReleases(newReleases);
 		};
+
+		const getPrs = async (givenReleases: Release[]) => {
+			const newReleases = await Promise.all(givenReleases.map(async (r: Release) => {
+				if (r.prev_tag_name && r.prev_substrate_commit) {
+					let polkadot_prs = await getPrsBetween("polkadot", r.prev_tag_name, r.tag_name);
+					let substrate_prs = await getPrsBetween("substrate", r.prev_substrate_commit, r.substrate_commit);
+					r.pull_requests = polkadot_prs.concat(substrate_prs);
+				}
+				return r
+			}));
+
+			givenReleases = newReleases;
+			setReleases(newReleases);
+		}
+
+
+		const process = async () => {
+			const fetchedReleases = await getReleases();
+			await getSubstrateCommits(fetchedReleases);
+			await getPrs(fetchedReleases);
+		}
+
 		process()
 	}, []);
 
 	useEffect(() => {
 		const filtered = releases
-			.filter((r) => r.pull_requests) // ideally should not be needed, I am not doing this right.
 			.map((release) => {
 				const filteredPRs = release.pull_requests.filter(pr => {
 					return pr.title.includes(searchQuery) || pr.author.includes(searchQuery)
@@ -94,8 +136,8 @@ function ReleaseList(): JSX.Element {
 					pull_requests: filteredPRs
 				};
 			})
-			.filter((release) => release.pull_requests.length)
 		setFilteredReleases(filtered);
+		console.log('filtering to', releases.length, filtered.length)
 	}, [searchQuery, releases])
 
 	return (
@@ -107,16 +149,18 @@ function ReleaseList(): JSX.Element {
 				value={searchQuery}
 				onChange={e => setSearchQuery(e.target.value)}
 			/>
-			{filteredReleases.reverse().map(release => {
+			{filteredReleases.map(release => {
 				return (
 					<div>
 						<h2>
 							{release.name} ({release.tag_name})
 						</h2>
 						<p>tag: {release.prev_tag_name}...{release.tag_name}</p>
+						<p>
+							{releaseLink(release.tag_name)} / {tagLink(release.tag_name)}
+						</p>
+						<p>Release date: {release.created_at}</p>
 						<p>substrate tag: {release.prev_substrate_commit}...{release.substrate_commit}</p>
-						{/* <p>total PRs: {release.pull_requests ? "0" : release.pull_requests.length}</p> */}
-
 						{
 							release.pull_requests ? release.pull_requests.map(pr => (
 								<pre>
@@ -126,8 +170,7 @@ function ReleaseList(): JSX.Element {
 						}
 					</div>
 				);
-			})
-			}
+			})}
 		</div>
 	)
 }
