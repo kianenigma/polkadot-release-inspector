@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/polkadot-releases/static/css/main.e6c13ad2.css",
-    "main.js": "/polkadot-releases/static/js/main.9b5a1f6c.js",
-    "static/js/787.f862d208.chunk.js": "/polkadot-releases/static/js/787.f862d208.chunk.js",
-    "index.html": "/polkadot-releases/index.html",
-    "main.e6c13ad2.css.map": "/polkadot-releases/static/css/main.e6c13ad2.css.map",
-    "main.9b5a1f6c.js.map": "/polkadot-releases/static/js/main.9b5a1f6c.js.map",
-    "787.f862d208.chunk.js.map": "/polkadot-releases/static/js/787.f862d208.chunk.js.map"
+    "main.css": "/polkadot-release-inspector/static/css/main.e6c13ad2.css",
+    "main.js": "/polkadot-release-inspector/static/js/main.dd187083.js",
+    "static/js/787.f862d208.chunk.js": "/polkadot-release-inspector/static/js/787.f862d208.chunk.js",
+    "index.html": "/polkadot-release-inspector/index.html",
+    "main.e6c13ad2.css.map": "/polkadot-release-inspector/static/css/main.e6c13ad2.css.map",
+    "main.dd187083.js.map": "/polkadot-release-inspector/static/js/main.dd187083.js.map",
+    "787.f862d208.chunk.js.map": "/polkadot-release-inspector/static/js/787.f862d208.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.9b5a1f6c.js"
+    "static/js/main.dd187083.js"
   ]
 }
