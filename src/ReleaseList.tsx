@@ -1,5 +1,4 @@
-import { Console } from 'console';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Release {
 	id: number;
@@ -65,10 +64,9 @@ function ReleaseList(): JSX.Element {
 	useEffect(() => {
 		const getReleases = async (): Promise<Release[]> => {
 			const rawReleases: Release[] = await fetch('https://api.github.com/repos/paritytech/polkadot/releases', { headers })
-				.then(response => response.json());
+				.then(response => response.ok ? response.json() : [])
 
 			for (let i = 0; i < rawReleases.length; i++) {
-				console.log(rawReleases[i]);
 				if (i !== (rawReleases.length - 1)) {
 					rawReleases[i].prev_tag_name = rawReleases[i + 1].tag_name;
 				}
@@ -126,6 +124,7 @@ function ReleaseList(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
+		if (!releases) { return; }
 		const filtered = releases
 			.map((release) => {
 				const filteredPRs = release.pull_requests.filter(pr => {
@@ -137,7 +136,6 @@ function ReleaseList(): JSX.Element {
 				};
 			})
 		setFilteredReleases(filtered);
-		console.log('filtering to', releases.length, filtered.length)
 	}, [searchQuery, releases])
 
 	return (
