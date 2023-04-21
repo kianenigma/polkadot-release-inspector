@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+
 interface Release {
 	id: number;
 	name: string;
@@ -22,10 +23,10 @@ interface PullRequest {
 	repo: "substrate" | "polkadot" | "cumulus"
 }
 
-// const headers = process.env.REACT_APP_GH_API ? {
-// 	Authorization: `Bearer ${process.env.REACT_APP_GH_API}`,
-// } : {}
-const headers = {};
+console.log(process.env);
+const headers = process.env.REACT_APP_GH_API && process.env.NODE_ENV === "development" ? {
+	Authorization: `Bearer ${process.env.REACT_APP_GH_API}`,
+} : { Authorization: `Bearer ${prompt('give me a gh token')}` }
 
 function releaseLink(tag: string): string {
 	return `https://github.com/paritytech/polkadot/releases/tag/${tag}`
