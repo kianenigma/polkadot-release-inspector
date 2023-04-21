@@ -22,9 +22,10 @@ interface PullRequest {
 	repo: "substrate" | "polkadot" | "cumulus"
 }
 
-const headers = {
-	Authorization: `Bearer ${process.env.REACT_APP_GH_API}`,
-}
+// const headers = process.env.REACT_APP_GH_API ? {
+// 	Authorization: `Bearer ${process.env.REACT_APP_GH_API}`,
+// } : {}
+const headers = {};
 
 function releaseLink(tag: string): string {
 	return `https://github.com/paritytech/polkadot/releases/tag/${tag}`
