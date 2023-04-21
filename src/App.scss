@@ -1,0 +1,20 @@
+@font-face {
+  font-family: 'Unbounded-Blond';
+  font-style: normal;
+  src: local('Unbounded-Blond'), url(./fonts/Unbounded-Blond.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Unbounded-Bold';
+  font-style: normal;
+  src: local('Unbounded-Bold'), url(./fonts/Unbounded-Bold.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Unbounded-Light';
+  font-style: normal;
+  src: local('Unbounded-Light'), url(./fonts/Unbounded-Light.ttf) format('truetype');
+}
+
+.App {
+  text-align: center;
+}
+
