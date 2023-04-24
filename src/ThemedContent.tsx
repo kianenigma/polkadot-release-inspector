@@ -123,7 +123,7 @@ export const ThemedContent = (): JSX.Element => {
 
   useEffect(() => {
     if (!releases) { return; }
-    const filtered = releases
+    const filtered: any = releases
       .map((release) => {
         // PR does not include searchQuery
         const filteredPRs = release.pull_requests.filter(pr => {
