@@ -1,0 +1,217 @@
+@mixin darkTheme(){
+  .dark-theme & {
+    @content;
+  }
+}
+
+@mixin lightTheme(){
+  .light-theme & {
+    @content;
+  }
+}
+
+.themed-content {
+
+  //dark theme specific styling
+  @include darkTheme{
+    .header {
+      background: rgba(0,0,0,1);
+      border-bottom: 0.1rem solid #ccc;
+      color:rgba(255,255,255,0.9);
+    }
+    .body {
+      background: rgba(0,0,0,1);
+      color: rgba(255,255,255,0.7);
+
+      a {
+        color: rgba(218,224,242,1);
+      }
+    }
+    .prs_title_open {
+      background-color: rgba(22,5,39,1);
+      color:rgba(255,255,255,0.9);
+      border: 0.1rem solid rgba(22,5,39,1);
+    }
+    .prs_title_loading {
+      background-color: rgba(22,5,39,1);
+      color:rgba(255,255,255,0.9);
+      border: 0.1rem solid rgba(22,5,39,1);
+    }
+    .prs_title_close {
+      background-color: rgba(22,5,39,1);
+      color:rgba(255,255,255,0.9);
+      border: 0.1rem solid rgba(22,5,39,1);
+    }
+    .prs {
+      background-color: rgba(22,5,39,1);
+      border: 0.1rem solid rgba(22,5,39,1);
+    }
+
+    .pr {
+   
+      .repo {
+        color: white;
+      }
+      .id {
+        color: white;
+      }
+      .author {
+        color: white;
+      }
+    }
+    
+  }
+  
+  //light theme specific styling
+  @include lightTheme{
+    .header {
+      background: rgba(255,255,255,1);
+      border-bottom: 0.1rem solid #ccc;
+      color: rgba(0,0,0,0.9);
+    }
+    .body {
+      background: rgba(255,255,255,1);
+      color: rgba(0,0,0,0.7);
+
+      a {
+        color: rgba(40,18,62,1)
+      }
+    }
+    .prs_title_open {
+      background-color: rgba(230,0,122,1);
+      color: rgba(0,0,0,0.9);;
+      border: 0.1rem solid rgba(230,0,122,1);
+    }
+    .prs_title_loading {
+      background-color: rgba(230,0,122,1);
+      color: rgba(0,0,0,0.9);;
+      border: 0.1rem solid rgba(230,0,122,1);
+    }
+    .prs_title_close {
+      background-color: rgba(230,0,122,1);
+      color: rgba(0,0,0,0.9);;
+      border: 0.1rem solid gba(230,0,122,1);
+    }
+    .prs {
+      background-color: rgba(230,0,122,1);
+      border: 0.1rem solid rgba(230,0,122,1);
+    }
+  }
+
+  .App {
+    text-align: center;
+  }
+
+  .title{
+    font-family: 'Unbounded';
+    font-size: 2rem;
+    align-items: center;
+    display: flex;
+  }
+
+  .theme {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .header {
+    padding: 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 10;
+  }
+
+  .body {
+
+    display: block;
+    position: absolute;
+    top: 11rem;
+    scroll-behavior: auto;
+    padding: 2rem;
+
+    a {
+      margin: 0 0.5rem;
+      text-decoration: underline;
+      font-weight: bold;
+      font-style: italic;
+    }
+  }
+
+  .label {
+    font-weight: bold;
+  }
+
+  .releaseTitle {
+    font-family: 'Unbounded';
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+
+  .pr_separator {
+    margin: 1rem 0;
+  }
+
+  .prs_title_open {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 1rem;
+    border-top-right-radius: 0.5rem;
+    border-top-left-radius: 0.5rem;
+    cursor: pointer;
+  }
+
+  .prs_title_loading {
+    display:flex;
+    flex-direction: row;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  .loading{
+    margin-left: 1rem;
+  }
+
+  .prs_title_close {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    cursor: pointer;
+  }
+
+  .prs {
+    padding: 1rem;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+  }
+
+  .version {
+    padding-left: 1rem;
+    font-size: 0.6rem;
+  }
+
+  .inputWrapper{
+    margin-top: 1rem;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .searchInput {
+    border: 1px solid #ccc;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+}

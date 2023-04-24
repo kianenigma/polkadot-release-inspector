@@ -11,14 +11,13 @@ interface PrInterface {
 }
 
 export const PrCollapse = ({ release }: any) => {
-  console.log('release.pull_requests.length', release.pull_requests.length)
 
   const [open, setOpen] = useState<boolean>(false);
 
   if (release.pull_requests.length === 0) {
     return <div className='prs_title_loading'>
       <CircleLoader
-        color="#eb0000"
+        color="#fff"
         size={20}
       />
       <span className="loading">Loading...</span>
@@ -27,7 +26,7 @@ export const PrCollapse = ({ release }: any) => {
 
   return (
     <Collapsible
-      trigger={<div className={`prs_title${open ? '_open' : '_close'}`}>Release's PRs</div>}
+      trigger={<div className={`prs_title${open ? '_open' : '_close'}`}>Pull Requests</div>}
       onTriggerOpening={() => setOpen(true)}
       onTriggerClosing={() => setOpen(false)}
     >
