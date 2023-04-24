@@ -3,6 +3,7 @@ import './App.scss';
 import { PullRequest, Release } from './types';
 import { GH_PARITY } from './consts';
 import { useLocalStorage } from './useLocalStorage';
+import { PrCollapse } from './PrCollapse';
 
 function releaseLink(tag: string): string {
   return `${GH_PARITY}/polkadot/releases/tag/${tag}`
@@ -19,6 +20,8 @@ export const App = (): JSX.Element => {
 
   const [promptHeaders, setPromptHeaders] = useLocalStorage("polkadot_releases_gh_token");
   const [headers, setHeaders] = useState({})
+
+  const [searchStrings, setSearchStrings] = useState<String[]>([])
 
   if (!promptHeaders && !(import.meta.env.VITE_APP_GH_API && import.meta.env.DEV)) {
     let promptResponse = prompt('give me a gh token');
@@ -62,6 +65,7 @@ export const App = (): JSX.Element => {
         .then(response => response.ok ? response.json() : [])
 
       for (let i = 0; i < rawReleases.length; i++) {
+
         if (i !== (rawReleases.length - 1)) {
           rawReleases[i].prev_tag_name = rawReleases[i + 1].tag_name;
         }
@@ -134,8 +138,7 @@ export const App = (): JSX.Element => {
   }, [searchQuery, releases])
 
   return (
-    <div>
-
+    <>
       <div className="header">
         <div className="title">Polkadot Releases<span className="version">v0.0.1</span></div>
 
@@ -162,22 +165,13 @@ export const App = (): JSX.Element => {
               </p>
               <p><span className="label">Release date:</span> {release.created_at}</p>
               <p><span className="label">Substrate tag:</span> {release.prev_substrate_commit} ... {release.substrate_commit}</p>
-              <div className="prs">
-                {
-                  release.pull_requests?.map(pr => (
-                    <div className="pr">
-                      <span className="repo">[{pr.repo}]</span> PR{' '}
-                      <span className="id">{pr.id}</span> by{' '}
-                      <span className="author">{pr.author}</span>: {pr.title}
-                    </div>
-                  ))
-                }
+              <div className="pr_separator">
+                <PrCollapse release={release} />
               </div>
             </div>
           );
         })}
       </div>
-
-    </div>
+    </>
   )
 }

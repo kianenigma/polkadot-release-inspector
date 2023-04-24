@@ -35,35 +35,59 @@
   font-size: 1.2rem;
 }
 
-.prs {
-  background-color: #eee;
-  padding: 1rem;
+.pr_separator {
   margin: 1rem 0;
-  border-radius: 0.5rem;
-  border: 0.1rem solid #999;
 }
 
-.pr {
-  padding-top: 0.3rem;
-  word-wrap: break-word;
-  font-size: 0.9rem;
-
-  .repo {
-    color: #292929;
-    font-weight: bold;
-  }
-  .id {
-    color: #696969;
-    font-style: italic;
-  }
-  .author {
-    color: #292929;
-    font-weight: bold;
-  }
-}
-
-.pr_title {
+.prs_title_open {
   font-weight: bold;
+  font-size: 1rem;
+  background-color: #ccc;
+  color: #505050;
+  padding: 1rem;
+  border-top-right-radius: 0.5rem;
+  border-top-left-radius: 0.5rem;
+  border: 0.1rem solid #ccc;
+  cursor: pointer;
+}
+
+.prs_title_loading {
+  display:flex;
+  flex-direction: row;
+  font-weight: bold;
+  font-size: 1rem;
+  background-color: #ccc;
+  color: #505050;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border: 0.1rem solid #ccc;
+}
+
+.loading{
+  margin-left: 1rem;
+}
+
+.prs_title_close {
+  font-weight: bold;
+  font-size: 1rem;
+  background-color: #ccc;
+  color: #505050;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border: 0.1rem solid #ccc;
+  cursor: pointer;
+}
+
+.prs {
+  background-color: #ccc;
+  padding: 1rem;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border: 0.1rem solid #ccc;
 }
 
 .version {
