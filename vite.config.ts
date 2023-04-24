@@ -6,7 +6,7 @@ import { VitePluginFonts } from 'vite-plugin-fonts'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',
+  base: 'https://wirednkod.github.io/polkadot-release-inspector/',
   plugins: [
     react(),
     viteTsconfigPaths(),
@@ -19,8 +19,5 @@ export default defineConfig({
   ],
   server: {
     port: 3006,
-  },
-  resolve: {
-    extensions: ['.js', '.tsx', '.ts']
   },
 });

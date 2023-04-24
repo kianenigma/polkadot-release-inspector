@@ -175,7 +175,7 @@ export const ThemedContent = (): JSX.Element => {
                 <span className="label">Links:</span>
                 <a href={releaseLink(release?.tag_name)} target="_blank">Release version</a>/<a href={tagLink(release?.tag_name)} target="_blank">Tag version</a>
               </p>
-              <p><span className="label">Release date:</span> {release?.created_at}</p>
+              <p><span className="label">Release date:</span> {new Date(release?.created_at).toDateString()}</p>
               <p><span className="label">Substrate tag:</span> {release?.prev_substrate_commit} ... {release?.substrate_commit}</p>
               <div className="pr_separator">
                 <PrCollapse release={release} />

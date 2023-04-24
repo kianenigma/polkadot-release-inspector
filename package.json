@@ -24,9 +24,7 @@
 		"deploy": "gh-pages -d dist",
 		"start": "vite",
 		"build": "tsc && vite build",
-		"serve": "vite preview",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject"
+		"serve": "vite preview"
 	},
 	"eslintConfig": {
 		"extends": [
