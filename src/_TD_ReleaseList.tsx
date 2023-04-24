@@ -142,7 +142,7 @@ function ReleaseList(): JSX.Element {
 
   return (
     <div>
-      <div className="title">Polkadot Releases</div>
+      <h1>Polkadot Releases</h1>
       <input
         type="text"
         placeholder="Search PR titles"

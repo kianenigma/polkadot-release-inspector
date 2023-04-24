@@ -1,20 +1,89 @@
-@font-face {
-  font-family: 'Unbounded-Blond';
-  font-style: normal;
-  src: local('Unbounded-Blond'), url(./fonts/Unbounded-Blond.ttf) format('truetype');
-}
-@font-face {
-  font-family: 'Unbounded-Bold';
-  font-style: normal;
-  src: local('Unbounded-Bold'), url(./fonts/Unbounded-Bold.ttf) format('truetype');
-}
-@font-face {
-  font-family: 'Unbounded-Light';
-  font-style: normal;
-  src: local('Unbounded-Light'), url(./fonts/Unbounded-Light.ttf) format('truetype');
-}
-
 .App {
   text-align: center;
 }
 
+.title{
+  font-family: 'Unbounded';
+  font-size: 2rem;
+}
+
+.header {
+  padding: 2rem;
+  border-bottom: 0.1rem solid #ccc;
+  position: fixed;
+  background: white;
+  width: 100%;
+  top: 0;
+  z-index: 9999;
+}
+
+.body {
+  display: block;
+  position: absolute;
+  top: 11rem;
+  scroll-behavior: auto;
+  padding: 2rem;
+}
+
+.label {
+  font-weight: bold;
+}
+
+.releaseTitle {
+  font-family: 'Unbounded';
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.prs {
+  background-color: #eee;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 0.5rem;
+  border: 0.1rem solid #999;
+}
+
+.pr {
+  padding-top: 0.3rem;
+  word-wrap: break-word;
+  font-size: 0.9rem;
+
+  .repo {
+    color: #292929;
+    font-weight: bold;
+  }
+  .id {
+    color: #696969;
+    font-style: italic;
+  }
+  .author {
+    color: #292929;
+    font-weight: bold;
+  }
+}
+
+.pr_title {
+  font-weight: bold;
+}
+
+.version {
+  padding-left: 1rem;
+  font-size: 0.6rem;
+}
+
+.inputWrapper{
+  margin-top: 2rem;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}

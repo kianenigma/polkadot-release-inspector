@@ -1,40 +1,30 @@
 import { useEffect, useState } from 'react';
 import './App.scss';
 import { PullRequest, Release } from './types';
-import { GH_PARITY } from './consts';
-import { useLocalStorage } from './useLocalStorage';
+import { API_GH_POLKADOT, GH_PARITY } from './consts';
 
-function releaseLink(tag: string): string {
-  return `${GH_PARITY}/polkadot/releases/tag/${tag}`
-}
+console.log(import.meta.env);
 
-function tagLink(tag: string): string {
-  return `${GH_PARITY}/polkadot/tree/${tag}`
-}
+const headers = import.meta.env.VITE_APP_GH_API && import.meta.env.DEV ? {
+  Authorization: `Bearer ${import.meta.env.VITE_APP_GH_API}`,
+} : { Authorization: `Bearer ${prompt('give me a gh token')}` }
+
+
 
 export const App = (): JSX.Element => {
   const [releases, setReleases] = useState<Release[]>([]);
   const [filteredReleases, setFilteredReleases] = useState<Release[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const [promptHeaders, setPromptHeaders] = useLocalStorage("polkadot_releases_gh_token");
-  const [headers, setHeaders] = useState({})
-
-  if (!promptHeaders && !(import.meta.env.VITE_APP_GH_API && import.meta.env.DEV)) {
-    let promptResponse = prompt('give me a gh token');
-    setPromptHeaders(promptResponse || '');
+  function releaseLink(tag: string): string {
+    return `https://github.com/paritytech/polkadot/releases/tag/${tag}`
   }
 
-  useEffect(() => {
-    console.log('import.meta.env.VITE_APP_GH_API && import.meta.env.DEV', import.meta.env.VITE_APP_GH_API, import.meta.env.DEV)
-    if (import.meta.env.VITE_APP_GH_API && import.meta.env.DEV) {
-      setHeaders({ Authorization: `Bearer ${import.meta.env.VITE_APP_GH_API}` });
-    } else {
-      setHeaders({ Authorization: `Bearer ${promptHeaders}` })
-    }
-  }, [promptHeaders]);
+  function tagLink(tag: string): string {
+    return `https://github.com/paritytech/polkadot/tree/${tag}`
+  }
 
-  const getPrsBetween = async (repo: string, from: string, to: string): Promise<PullRequest[]> => {
+  const getPRsBetween = async (repo: string, from: string, to: string): Promise<PullRequest[]> => {
     const commitsUrl = `https://api.github.com/repos/paritytech/${repo}/compare/${from}...${to}`;
     const commitsResponse = await fetch(commitsUrl, { headers });
     const diff = await commitsResponse.json();
@@ -50,15 +40,15 @@ export const App = (): JSX.Element => {
   };
 
   const getVersionFromCargo = async (repo: string, commitHash: string): Promise<string | undefined> => {
-    const content = await fetch(`https://api.github.com/repos/paritytech/polkadot/contents/Cargo.lock?ref=${commitHash}`, { headers })
+    const content = await fetch(`${API_GH_POLKADOT}/contents/Cargo.lock?ref=${commitHash}`, { headers })
       .then((d) => d.json())
       .then((data) => atob(data.content));
-    return content.split("\n").find((l) => l.includes(`${GH_PARITY}/${repo}?branch`))?.split("#")[1].slice(0, -1);
+    return content.split("\n").find((l) => l.includes(`${GH_PARITY} / ${repo} ? branch`))?.split("#")[1].slice(0, -1);
   }
 
   useEffect(() => {
     const getReleases = async (): Promise<Release[]> => {
-      const rawReleases: Release[] = await fetch('https://api.github.com/repos/paritytech/polkadot/releases', { headers })
+      const rawReleases: Release[] = await fetch(`${API_GH_POLKADOT}/releases`, { headers })
         .then(response => response.ok ? response.json() : [])
 
       for (let i = 0; i < rawReleases.length; i++) {
@@ -94,11 +84,11 @@ export const App = (): JSX.Element => {
       setReleases(newReleases);
     };
 
-    const getPrs = async (givenReleases: Release[]) => {
+    const getPRs = async (givenReleases: Release[]) => {
       const newReleases = await Promise.all(givenReleases.map(async (r: Release) => {
         if (r.prev_tag_name && r.prev_substrate_commit) {
-          let polkadot_prs = await getPrsBetween("polkadot", r.prev_tag_name, r.tag_name);
-          let substrate_prs = await getPrsBetween("substrate", r.prev_substrate_commit, r.substrate_commit);
+          let polkadot_prs = await getPRsBetween("polkadot", r.prev_tag_name, r.tag_name);
+          let substrate_prs = await getPRsBetween("substrate", r.prev_substrate_commit, r.substrate_commit);
           r.pull_requests = polkadot_prs.concat(substrate_prs);
         }
         return r
@@ -112,30 +102,29 @@ export const App = (): JSX.Element => {
     const process = async () => {
       const fetchedReleases = await getReleases();
       await getSubstrateCommits(fetchedReleases);
-      await getPrs(fetchedReleases);
+      await getPRs(fetchedReleases);
     }
 
     process()
-  }, [headers]);
+  }, []);
 
   useEffect(() => {
-    if (!releases) { return; }
-    const filtered = releases
-      .map((release) => {
-        const filteredPRs = release.pull_requests.filter(pr => {
-          return pr.title.includes(searchQuery) || pr.author.includes(searchQuery)
-        });
-        return {
-          ...release,
-          pull_requests: filteredPRs
-        };
-      })
+    if (!releases) return;
+
+    const filtered = releases.map((release) => {
+      const filteredPRs = release.pull_requests.filter(pr => {
+        return pr.title.includes(searchQuery) || pr.author.includes(searchQuery)
+      });
+      return {
+        ...release,
+        pull_requests: filteredPRs
+      };
+    })
     setFilteredReleases(filtered);
   }, [searchQuery, releases])
 
   return (
-    <div>
-
+    <>
       <div className="header">
         <div className="title">Polkadot Releases<span className="version">v0.0.1</span></div>
 
@@ -153,31 +142,26 @@ export const App = (): JSX.Element => {
         {filteredReleases.map(release => {
           return (
             <div>
-              <div className="releaseTitle">
+              <h2>
                 {release.name} ({release.tag_name})
-              </div>
-              <p><span className="label">Tag:</span> {release.prev_tag_name} ... {release.tag_name}</p>
+              </h2>
+              <p>tag: {release.prev_tag_name}...{release.tag_name}</p>
               <p>
-                <span className="label">Links:</span> {releaseLink(release.tag_name)} / {tagLink(release.tag_name)}
+                {releaseLink(release.tag_name)} / {tagLink(release.tag_name)}
               </p>
-              <p><span className="label">Release date:</span> {release.created_at}</p>
-              <p><span className="label">Substrate tag:</span> {release.prev_substrate_commit} ... {release.substrate_commit}</p>
-              <div className="prs">
-                {
-                  release.pull_requests?.map(pr => (
-                    <div className="pr">
-                      <span className="repo">[{pr.repo}]</span> PR{' '}
-                      <span className="id">{pr.id}</span> by{' '}
-                      <span className="author">{pr.author}</span>: {pr.title}
-                    </div>
-                  ))
-                }
-              </div>
+              <p>Release date: {release.created_at}</p>
+              <p>substrate tag: {release.prev_substrate_commit}...{release.substrate_commit}</p>
+              {
+                release.pull_requests ? release.pull_requests.map(pr => (
+                  <pre>
+                    [{pr.repo}] PR {pr.id} by {pr.author}: {pr.title}
+                  </pre>
+                )) : "..Loading"
+              }
             </div>
           );
         })}
       </div>
-
-    </div>
-  )
+    </>
+  );
 }
