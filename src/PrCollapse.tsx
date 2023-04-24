@@ -25,7 +25,6 @@ export const PrCollapse = ({ release }: any) => {
     </div>
   }
 
-  console.log('!!! ', open)
   return (
     <Collapsible
       trigger={<div className={`prs_title${open ? '_open' : '_close'}`}>Release's PRs</div>}

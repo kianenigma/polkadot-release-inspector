@@ -21,8 +21,6 @@ export const App = (): JSX.Element => {
   const [promptHeaders, setPromptHeaders] = useLocalStorage("polkadot_releases_gh_token");
   const [headers, setHeaders] = useState({})
 
-  const [searchStrings, setSearchStrings] = useState<String[]>([])
-
   if (!promptHeaders && !(import.meta.env.VITE_APP_GH_API && import.meta.env.DEV)) {
     let promptResponse = prompt('give me a gh token');
     setPromptHeaders(promptResponse || '');
@@ -126,14 +124,34 @@ export const App = (): JSX.Element => {
     if (!releases) { return; }
     const filtered = releases
       .map((release) => {
+        // PR does not include searchQuery
         const filteredPRs = release.pull_requests.filter(pr => {
           return pr.title.includes(searchQuery) || pr.author.includes(searchQuery)
         });
-        return {
-          ...release,
-          pull_requests: filteredPRs
-        };
+        // Release tag_name  includes searchQuery?
+        const releaseName = release.name.includes(searchQuery);
+        // Release tag_name  includes searchQuery?
+        const releaseTagName = release.tag_name.includes(searchQuery);
+        // Release substrate Commit includes searchQuery?
+        const substrateCommit = release.substrate_commit.includes(searchQuery);
+        // Release tag_name does not include searchQuery
+
+        console.log('filteredPRs = ', filteredPRs)
+        console.log('releaseName = ', releaseName)
+        console.log('releaseTagName = ', releaseTagName)
+        console.log('substrateCommit = ', substrateCommit)
+
+        if (filteredPRs.length || releaseName || releaseTagName || substrateCommit) {
+          return {
+            ...release,
+            pull_requests: filteredPRs
+          };
+        } else {
+          return
+        }
       })
+
+    console.log('FILTERED ----> ', filtered)
     setFilteredReleases(filtered);
   }, [searchQuery, releases])
 
@@ -154,17 +172,17 @@ export const App = (): JSX.Element => {
       </div>
       <div className="body">
         {filteredReleases.map(release => {
-          return (
+          return release && (
             <div>
               <div className="releaseTitle">
-                {release.name} ({release.tag_name})
+                {release?.name} ({release?.tag_name})
               </div>
-              <p><span className="label">Tag:</span> {release.prev_tag_name} ... {release.tag_name}</p>
+              <p><span className="label">Tag:</span> {release?.prev_tag_name} ... {release?.tag_name}</p>
               <p>
-                <span className="label">Links:</span> {releaseLink(release.tag_name)} / {tagLink(release.tag_name)}
+                <span className="label">Links:</span> {releaseLink(release?.tag_name)} / {tagLink(release?.tag_name)}
               </p>
-              <p><span className="label">Release date:</span> {release.created_at}</p>
-              <p><span className="label">Substrate tag:</span> {release.prev_substrate_commit} ... {release.substrate_commit}</p>
+              <p><span className="label">Release date:</span> {release?.created_at}</p>
+              <p><span className="label">Substrate tag:</span> {release?.prev_substrate_commit} ... {release?.substrate_commit}</p>
               <div className="pr_separator">
                 <PrCollapse release={release} />
               </div>
