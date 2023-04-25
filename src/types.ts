@@ -7,7 +7,7 @@ export interface Release {
   substrate_commit: string;
   prev_substrate_commit: string;
   pull_requests: PullRequest[];
-
+  searchResults?: any;
 }
 
 export interface PullRequest {
