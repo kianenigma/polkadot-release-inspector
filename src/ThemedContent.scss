@@ -77,28 +77,34 @@
       }
     }
     .prs_title_open {
-      background-color: rgba(230,0,122,1);
-      color: rgba(0,0,0,0.9);;
+      background: rgb(255 229 243);
+      color: rgba(0,0,0,0.9);
       border: 0.1rem solid rgba(230,0,122,1);
+      border-bottom:0;
     }
     .prs_title_loading {
-      background-color: rgba(230,0,122,1);
-      color: rgba(0,0,0,0.9);;
+      background: rgb(255 229 243);
+      color: rgba(0,0,0,0.9);
       border: 0.1rem solid rgba(230,0,122,1);
     }
     .prs_title_close {
-      background-color: rgba(230,0,122,1);
-      color: rgba(0,0,0,0.9);;
+      background: rgba(230,0,122,1);
+      color: rgba(0,0,0,0.9);
       border: 0.1rem solid gba(230,0,122,1);
     }
     .prs {
-      background-color: rgba(230,0,122,1);
+      background: rgb(255 229 243);
       border: 0.1rem solid rgba(230,0,122,1);
+      border-top: 0;
     }
   }
 
   .App {
     text-align: center;
+  }
+
+  .results_found {
+    font-size: 1rem;
   }
 
   .title{

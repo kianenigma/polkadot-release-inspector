@@ -137,6 +137,8 @@ export const ThemedContent = (): JSX.Element => {
         const substrateCommit = release.substrate_commit.includes(searchQuery);
         // Release tag_name does not include searchQuery
 
+        release.searchResults = filteredPRs.length;
+
         if (filteredPRs.length || releaseName || releaseTagName || substrateCommit) {
           return {
             ...release,
@@ -170,6 +172,7 @@ export const ThemedContent = (): JSX.Element => {
               <div className="releaseTitle">
                 {release?.name} ({release?.tag_name})
               </div>
+              {searchQuery && <div className="results_found">Results found: {release?.searchResults}</div>}
               <p><span className="label">Tag:</span> {release?.prev_tag_name} ... {release?.tag_name}</p>
               <p>
                 <span className="label">Links:</span>
